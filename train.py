@@ -15,7 +15,7 @@ from datasets import GrayscaleImageFolder
 
 
 ROOT = Path(__file__).parent.resolve()
-IMAGE_SIZE = 128
+IMAGE_SIZE = 256
 IMAGE_CHANNELS = 1
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -153,6 +153,10 @@ def train(args):
             if errG == np.min(G_losses):
                 torch.jit.save(torch.jit.script(generator), f'{ROOT}/runs/{args.experiment_name}/generator_best.pt')
                 torch.jit.save(torch.jit.script(discriminator), f'{ROOT}/runs/{args.experiment_name}/discriminator_best.pt')
+
+
+    np.save(f'{ROOT}/runs/{args.experiment_name}/generator_losses.npy', np.array(G_losses))
+    np.save(f'{ROOT}/runs/{args.experiment_name}/discriminator_losses.npy', np.array(D_losses))
 
 
 

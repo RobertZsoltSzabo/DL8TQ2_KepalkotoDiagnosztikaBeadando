@@ -85,11 +85,8 @@ class Generator(nn.Module):
             nn.ConvTranspose2d( feature_channels, feature_channels//2, 4, 2, 1, bias=False),
             nn.BatchNorm2d(feature_channels//2),
             nn.LeakyReLU(0.2, inplace=True),
-            # state size. ``(nc) x 64 x 64``
-            nn.ConvTranspose2d( feature_channels//2, feature_channels//4, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(feature_channels//4),
-            nn.LeakyReLU(0.2, inplace=True),
-            nn.ConvTranspose2d(feature_channels//4, out_channels, 4, 2, 1, bias=False),
+            # state size. ``(nc) x 64 x 64`'
+            nn.ConvTranspose2d(feature_channels//2, out_channels, 4, 2, 1, bias=False),
             nn.Tanh()
         )
         self.apply(weights_init)
@@ -169,15 +166,15 @@ class Discriminator(nn.Module):
             nn.Conv2d(in_channels, feature_channels, 4, 2, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. ``(ndf) x 32 x 32``
-            nn.Conv2d(feature_channels, feature_channels, 4, 2, 1, bias=False),
-            #nn.BatchNorm2d(feature_channels * 2),
+            nn.Conv2d(feature_channels, feature_channels*2, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(feature_channels*2),
             nn.LeakyReLU(0.2, inplace=True),
 
             # state size. ``(ndf*2) x 16 x 16``
             # state size. ``(ndf*8) x 4 x 4``
             #nn.Conv2d(feature_channels * 2, 1, input_size//4, 1, 0, bias=False),
             nn.Flatten(),
-            nn.Linear(in_features=feature_channels*(input_size//4)*(input_size//4), out_features=1, bias=False),
+            nn.Linear(in_features=feature_channels*2*(input_size//4)*(input_size//4), out_features=1, bias=False),
             nn.Sigmoid()
         )
         self.apply(weights_init)

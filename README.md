@@ -42,12 +42,23 @@ A diszkriminátor vizualizált architektúrája:
   <img src="documentation/images/discriminator_plot.png">
 </p>
 
-## Eredmény
+## Eredmények
+Az itt látható eredmények a fent leírt módszerekkel lettek előállítva. A modell összesen 13 epochon keresztül tanult a teljes adathalmazon.
+
+A két modell hibafüggvényének halakulása batchenként:
+![Hibafüggvények](documentation/images/loss_plot.png)
+A gráf összességében mutat némi csökkenő tendenciát, de a nagyon nagy oszcilláció ezt egyrészt kicsit eltakarja, másrészt a oszcilláció utalhat valamilyen mértékű mode collapse problémára.
+
+Valós és generált képek vizuális összehasonlítása:
+![Valós és generált képek](documentation/images/network_output.png)
+A képek felszínesen hasonlóak, de sajnos nem sikerült anatómiailag korrekt képeket generálni.
+
 
 ## Limitációk, prolémák
-- **Képméret**: A modell kifejezetten érzékenynek bizonyult az elvárt kimeneti képméretre. Nagyobb felbontás esetén a diszkriminátor minden esetben túlteljesítette a generátort. A diszkriminátor egyszerűsítésével valamennyit sikerült látszólag enyhíteni a problémán (64*64 helyett 128*128 pixel), de sajnos ennél tovább nem vitt ez a módszer - a diszkriminátor túlságosan "lebutítása" egyéb problémákat hozott (a generátor túl könnyen tudta "becsapni", így ezért nem tanult tovább). A 128*128 pixel képméret azonban neurális háló tanításhoz potenciálisan elég lehet.
+- **Képméret**: A modell kifejezetten érzékenynek bizonyult az elvárt kimeneti képméretre. Nagyobb felbontás esetén a diszkriminátor minden esetben túlteljesítette a generátort. A diszkriminátor egyszerűsítésével valamennyit sikerült látszólag enyhíteni a problémán (64x64 helyett 128x128 pixel), de sajnos ennél tovább nem vitt ez a módszer - a diszkriminátor túlságosan "lebutítása" egyéb problémákat hozott (a generátor túl könnyen tudta "becsapni", így ezért nem tanult tovább). A 128x128 pixel képméret azonban neurális háló tanításhoz potenciálisan elég lehet.
 - **Inhomogén adathalmaz**: Az adathalmazunk tartalmazza az összes felvétel képkockáit, így összesen 8 különböző irányból készült felvételek keverednek benne. Mivel ezeknek a felvételeknek eltérő a karakterisztikájuk, a generátor vegyíti ezeket a tulajdonságokat, és a valóságnak nem megfelelő képeket állít elő. Ha azonban csak egy adott lokációból felvett képeket használtam, a modell minden esetben mode collapse problémába futott - összesen 1-2 féle képet generált, ami kellően jól be tudta csapni a diszkriminátort. Elvben a lokációk szerinti elválasztás lenne a helyes út, de sajnos egyelőre nem találtam megoldást a mode collapse problémára
 - **Tanítás hosszúsága**: Erőforrások hiányában sajnos viszonylag rövid ideig (~3-24 óra, esetenként változott) volt lehetőségem tanítani a modelleket. Mivel nagy az adathalmaz, ez mindössze néhány (7-8) epoch tanítást jelentett, és az általan áttekintett irodalom szerint ilyen típusú modellek tipikusan sokkal hosszabb tanítást igényelnek.
+- **Mode collapse**: sajnos minden próbálkozásom ellenére a mode collapse továbbra is probléma 128x128 méretű képek esetén. A modellek és a hibafüggvény finomításával vélhetőleg lehet tovább javítani rajta, de a rendelkezésre álló időben eddig sikerült eljutni. Azért döntöttem mégis ennek az eredménynek a használata mellett (a stabilabb eredményű 64x64es modell helyett), mert a vélt probléma ellenére a generált képek emberi szemmel nem tűnnek rosszabbnak. Az oszcilláció utalhat más problémára is, ennek a felgöngyölítése további kísérletezést igényelne.
 
 ## Felhasznált irodalom
 <a id="2">[1]</a> 

@@ -82,12 +82,9 @@ class Generator(nn.Module):
             nn.BatchNorm2d(feature_channels),
             nn.LeakyReLU(0.2, inplace=True),
             # state size. ``(ngf) x 32 x 32``
-            nn.ConvTranspose2d( feature_channels, feature_channels//2, 4, 2, 1, bias=False),
-            nn.BatchNorm2d(feature_channels//2),
-            nn.LeakyReLU(0.2, inplace=True),
-            # state size. ``(nc) x 64 x 64`'
-            nn.ConvTranspose2d(feature_channels//2, out_channels, 4, 2, 1, bias=False),
+            nn.ConvTranspose2d(feature_channels, out_channels, 4, 2, 1, bias=False),
             nn.Tanh()
+                        # state size. ``(nc) x 64 x 64`'
         )
         self.apply(weights_init)
 

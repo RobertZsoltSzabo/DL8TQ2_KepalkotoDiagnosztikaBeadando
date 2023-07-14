@@ -1,6 +1,6 @@
 from torch import nn
 
-# Generator Code  
+
 class Generator(nn.Module):
     def __init__(self, in_channels, feature_channels, out_channels):
         super(Generator, self).__init__()

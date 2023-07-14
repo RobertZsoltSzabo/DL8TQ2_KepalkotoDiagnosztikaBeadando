@@ -77,84 +77,60 @@ def train(args):
     if not os.path.exists(f'{ROOT}/runs/{args.experiment_name}'):
         os.makedirs(f'{ROOT}/runs/{args.experiment_name}')
 
-    # Lists to keep track of progress
     G_losses = []
     D_losses = []
 
     print("Starting Training Loop...")
-    # For each epoch
     for epoch in range(args.epochs):
-        # For each batch in the dataloader
         for i, data in enumerate(dataloader, 0):
-            
-            ############################
-            # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
-            ###########################
-            ## Train with all-real batch
+            # Train discriminator on real images
             discriminator.zero_grad()
-            # Format batch
-            real_cpu = data.to(DEVICE)
-            b_size = real_cpu.size(0)
+            real_batch = data.to(DEVICE)
+            b_size = real_batch.size(0)
             label = torch.full((b_size,), real_label, dtype=torch.float, device=DEVICE)
-            # Forward pass real batch through D
-            output = discriminator(real_cpu).view(-1)
-            # Calculate loss on all-real batch
-            errD_real = criterion(output, label)
-            # Calculate gradients for D in backward pass
-            errD_real.backward()
-            D_x = output.mean().item()
 
-            ## Train with all-fake batch
-            # Generate batch of latent vectors
+            output = discriminator(real_batch).view(-1)
+
+            errD_real = criterion(output, label)
+            errD_real.backward()
+
+            # Train discriminator on fake images
             noise = torch.randn(b_size, args.latent_vector_length, 1, 1, device=DEVICE)
-            # Generate fake image batch with G
             fake = generator(noise)
             label.fill_(fake_label)
-            # Classify all fake batch with D
+
             output = discriminator(fake.detach()).view(-1)
-            # Calculate D's loss on the all-fake batch
+
             errD_fake = criterion(output, label)
-            # Calculate the gradients for this batch, accumulated (summed) with previous gradients
             errD_fake.backward()
-            D_G_z1 = output.mean().item()
-            # Compute error of D as sum over the fake and the real batches
             errD = errD_real + errD_fake
-            # Update D
+
             optimizerD.step()
 
-            ############################
-            # (2) Update G network: maximize log(D(G(z)))
-            ###########################
+            # Train generator
             generator.zero_grad()
-            label.fill_(real_label)  # fake labels are real for generator cost
-            # Since we just updated D, perform another forward pass of all-fake batch through D
+            label.fill_(real_label) 
+
             output = discriminator(fake).view(-1)
-            # Calculate G's loss based on this output
+
             errG = criterion(output, label)
-            # Calculate gradients for G
             errG.backward()
-            D_G_z2 = output.mean().item()
-            # Update G
+
             optimizerG.step()
             
-            # Output training stats
+            # Output training stats after every 50 steps
             if i % 50 == 0:
-                print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
-                    % (epoch, args.epochs, i, len(dataloader),
-                        errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
+                print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f' % (epoch, args.epochs, i, len(dataloader), errD.item(), errG.item()))
             
-            # Save Losses for plotting later
             G_losses.append(errG.item())
             D_losses.append(errD.item())
-
             
+            # Save the models as torchscript
             torch.jit.save(torch.jit.script(generator), f'{ROOT}/runs/{args.experiment_name}/generator_last.pt')
             torch.jit.save(torch.jit.script(discriminator), f'{ROOT}/runs/{args.experiment_name}/discriminator_last.pt')
-            if errG == np.min(G_losses):
-                torch.jit.save(torch.jit.script(generator), f'{ROOT}/runs/{args.experiment_name}/generator_best.pt')
-                torch.jit.save(torch.jit.script(discriminator), f'{ROOT}/runs/{args.experiment_name}/discriminator_best.pt')
 
 
+    # at the end of training save the losses for plotting
     np.save(f'{ROOT}/runs/{args.experiment_name}/generator_losses.npy', np.array(G_losses))
     np.save(f'{ROOT}/runs/{args.experiment_name}/discriminator_losses.npy', np.array(D_losses))
 

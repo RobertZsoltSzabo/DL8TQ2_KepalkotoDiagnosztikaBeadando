@@ -31,11 +31,25 @@ Az első blokk kimenete 4x4, innentől kezdve pedig minden hasonló hármas blok
 A modell végső kimenete eltér a fent leírt blokktól. Erre két okból van szükség:
 - A DCGAN cikk javaslata alapján a generátor kimenetét előnyösebb normalizáció nélkül alkalmazni, ami stabilabb modellt eredményez
 - A generátor végső kimenetén TanH aktivációs függvényt használunk
+
 A generátor vizualizált architektúrája:
-![A generátor vizualizált architektúrája](http://url/to/img.png)
+![A generátor vizualizált architektúrája](documentation/images/generator_plot.png)
 
+### Diszkriminátor
+A diszkriminátor modell egy hagyományosnak mondható, bináris klasszifikáló modell. a DCGAN cikk egy tisztán konvolúciós diszkriminátort alkalmaz, azonban az én esetemben ez nem vezetett eredményre - a tanítás során a diszkriminátor nagyon hamar túlságosan jól megtanulta kiszűrni a generátor képeit, így a generátor nem tudott tovább fejlődni. Ennek kiküszöbölésére egy egyszerűbb modellt használtam, kevesebb rejtett réteggel, a végén pedig konvolúció helyett egy teljesen kapcsolt réteggel. Hasonlóan a generátorhoz, a diszkriminátor is LeakyReLU-t használ aktivációs függvényként, illetve normalizációt is használ (a legelső, bemeneti réteg kimenetét leszámítva - ugyanabból az okból, amiért a generátor kimenetét sem normalizáljuk).
+A diszkriminátor vizualizált architektúrája:
+<p align="center">
+  <img src="documentation/images/discriminator_plot.png">
+</p>
 
-## References
+## Eredmény
+
+## Limitációk, prolémák
+- **Képméret**: A modell kifejezetten érzékenynek bizonyult az elvárt kimeneti képméretre. Nagyobb felbontás esetén a diszkriminátor minden esetben túlteljesítette a generátort. A diszkriminátor egyszerűsítésével valamennyit sikerült látszólag enyhíteni a problémán (64*64 helyett 128*128 pixel), de sajnos ennél tovább nem vitt ez a módszer - a diszkriminátor túlságosan "lebutítása" egyéb problémákat hozott (a generátor túl könnyen tudta "becsapni", így ezért nem tanult tovább). A 128*128 pixel képméret azonban neurális háló tanításhoz potenciálisan elég lehet.
+- **Inhomogén adathalmaz**: Az adathalmazunk tartalmazza az összes felvétel képkockáit, így összesen 8 különböző irányból készült felvételek keverednek benne. Mivel ezeknek a felvételeknek eltérő a karakterisztikájuk, a generátor vegyíti ezeket a tulajdonságokat, és a valóságnak nem megfelelő képeket állít elő. Ha azonban csak egy adott lokációból felvett képeket használtam, a modell minden esetben mode collapse problémába futott - összesen 1-2 féle képet generált, ami kellően jól be tudta csapni a diszkriminátort. Elvben a lokációk szerinti elválasztás lenne a helyes út, de sajnos egyelőre nem találtam megoldást a mode collapse problémára
+- **Tanítás hosszúsága**: Erőforrások hiányában sajnos viszonylag rövid ideig (~3-24 óra, esetenként változott) volt lehetőségem tanítani a modelleket. Mivel nagy az adathalmaz, ez mindössze néhány (7-8) epoch tanítást jelentett, és az általan áttekintett irodalom szerint ilyen típusú modellek tipikusan sokkal hosszabb tanítást igényelnek.
+
+## Felhasznált irodalom
 <a id="2">[1]</a> 
 Lichtenstein, Daniel A., and Gilbert A. Meziere. "Relevance of lung ultrasound in the diagnosis of acute respiratory failure*: the BLUE protocol." Chest 134.1 (2008): 117-125.
 

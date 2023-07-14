@@ -10,12 +10,12 @@ import numpy as np
 import os
 from pathlib import Path
 
-from models import Generator, Discriminator, DiscriminatorOriginal
+from models import Generator, Discriminator
 from datasets import GrayscaleImageFolder
 
 
 ROOT = Path(__file__).parent.resolve()
-IMAGE_SIZE = 64
+IMAGE_SIZE = 128
 IMAGE_CHANNELS = 1
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -62,8 +62,9 @@ def train(args):
                           feature_channels=args.generator_features,
                           out_channels=IMAGE_CHANNELS).to(DEVICE)
 
-    discriminator = DiscriminatorOriginal(in_channels=IMAGE_CHANNELS,
-                                  feature_channels=args.discriminator_features).to(DEVICE)
+    discriminator = Discriminator(in_channels=IMAGE_CHANNELS,
+                                  feature_channels=args.discriminator_features,
+                                  input_size=IMAGE_SIZE).to(DEVICE)
 
     criterion = nn.BCELoss()
 

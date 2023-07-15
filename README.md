@@ -18,6 +18,12 @@ Mindkét hálózatot ugyanazon az adaton tanítjuk - a generáló hálózat cél
 ### Hibafüggvény
 Az egymás elleni játék kulcsa, hogy a két hálózat ugyanazt a hibafüggvényt használja - a diszkriminátor igyekszik a hibafüggvényt minimalizálni (minél jobban megkülönböztetni a valós képeket a hamistól), a generátor pedig igyekszik maximalizálni (minél jobban "átverni" a diszkriminátort). Ebből látszik, hogy a hibafüggvényt igazából csak a diszkriminátoron számítjuk a generátor tanításakor is. A diszkriminátor szempontjából a feladat bináris klasszifikáció, így a használt hibafüggvény a binary cross entropy loss (BCE Loss).
 
+### Tanítás
+A tanítás során egyszerre optimalizáljuk a két hálózatot. Minden egyes valós batchnél az alábbi három lépést valósítjuk meg:
+1) Diszkriminátor hibafüggvényének kiszámítása valós batch-en, hibavüggvény visszaterjesztése a diszkriminátoron
+2) Diszkriminátor hibafüggvényének kiszámítása generált batch-en, hibavüggvény visszaterjesztése a diszkriminátoron
+3) Diszkriminátor hibafüggvényének kiszámítása generált batch-en, hibavüggvény visszaterjesztése a generátoron
+
 ## Megvalósítás
 A megvalósítás teljes kódja jelen repositoryban megtalálható. A megoldásban használt modellek alapját a gyakran csak DCGAN (Deep Convolutional Generative Adversarial Network) cikként emlegetett "Unsupervised representation learning with deep convolutional generative adversarial networks" adta[[3]](#3), azonban eszközöltem néhány fontos változtatást, különösképp a diszkriminátor modell esetében, amik a tesztelés során jobb eredményre vezettek.
 

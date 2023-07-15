@@ -53,13 +53,15 @@ Az itt látható eredmények a fent leírt módszerekkel lettek előállítva. A
 
 A két modell hibafüggvényének halakulása batchenként:
 
-![Hibafüggvények](documentation/images/loss_plot.PNG)
+<p align="center">
+  <img src="documentation/images/loss_plot.PNG">
+</p>
 
-A gráf összességében mutat némi csökkenő tendenciát, de a nagyon nagy oszcilláció ezt egyrészt kicsit eltakarja, másrészt a oszcilláció utalhat valamilyen mértékű mode collapse problémára.
+A gráf összességében mutat némi csökkenő tendenciát, de a nagyon nagy oszcilláció ezt egyrészt kicsit eltakarja, másrészt a oszcilláció általában instabil modellre, esetleg mode collapse problémára utal.
 
 Valós és generált képek vizuális összehasonlítása:
 ![Valós és generált képek](documentation/images/network_output.png)
-A képek felszínesen hasonlóak, de sajnos nem sikerült anatómiailag korrekt képeket generálni.
+A képek felszínesen hasonlóak, és bizonyos anatómiai elemek is kezdenek jelleghelyesen kirajzolódni (bordák árnyéka, mellhártya vonala), de a generált képek ennyi tanítás után nem elég élethűek. Pozitívum, hogy a fent említett oszcilláló hibafüggvény ellenére számomra úgy tűnik, hogy nincs mode collapse probléma, szemmel láthatóan a képek kellően különbözőek.
 
 
 ## Limitációk, prolémák

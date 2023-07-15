@@ -52,7 +52,9 @@ A diszkriminátor vizualizált architektúrája:
 Az itt látható eredmények a fent leírt módszerekkel lettek előállítva. A modell összesen 13 epochon keresztül tanult a teljes adathalmazon.
 
 A két modell hibafüggvényének halakulása batchenként:
-![Hibafüggvények](documentation/images/loss_plot.png)
+
+![Hibafüggvények](documentation/images/loss_plot.PNG)
+
 A gráf összességében mutat némi csökkenő tendenciát, de a nagyon nagy oszcilláció ezt egyrészt kicsit eltakarja, másrészt a oszcilláció utalhat valamilyen mértékű mode collapse problémára.
 
 Valós és generált képek vizuális összehasonlítása:

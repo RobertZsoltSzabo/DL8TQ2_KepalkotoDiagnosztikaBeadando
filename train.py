@@ -20,7 +20,6 @@ IMAGE_CHANNELS = 1
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-# Parse command line arguments
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-folder", type=str)
@@ -83,7 +82,6 @@ def train(args):
     print("Starting Training Loop...")
     for epoch in range(args.epochs):
         for i, data in enumerate(dataloader, 0):
-            # Train discriminator on real images
             discriminator.zero_grad()
             real_batch = data.to(DEVICE)
             b_size = real_batch.size(0)
@@ -94,7 +92,6 @@ def train(args):
             errD_real = criterion(output, label)
             errD_real.backward()
 
-            # Train discriminator on fake images
             noise = torch.randn(b_size, args.latent_vector_length, 1, 1, device=DEVICE)
             fake = generator(noise)
             label.fill_(fake_label)
@@ -104,10 +101,8 @@ def train(args):
             errD_fake = criterion(output, label)
             errD_fake.backward()
             errD = errD_real + errD_fake
-
             optimizerD.step()
 
-            # Train generator
             generator.zero_grad()
             label.fill_(real_label) 
 
@@ -115,22 +110,17 @@ def train(args):
 
             errG = criterion(output, label)
             errG.backward()
-
             optimizerG.step()
             
-            # Output training stats after every 50 steps
             if i % 50 == 0:
                 print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f' % (epoch, args.epochs, i, len(dataloader), errD.item(), errG.item()))
             
             G_losses.append(errG.item())
             D_losses.append(errD.item())
             
-            # Save the models as torchscript
             torch.jit.save(torch.jit.script(generator), f'{ROOT}/runs/{args.experiment_name}/generator_last.pt')
             torch.jit.save(torch.jit.script(discriminator), f'{ROOT}/runs/{args.experiment_name}/discriminator_last.pt')
 
-
-    # at the end of training save the losses for plotting
     np.save(f'{ROOT}/runs/{args.experiment_name}/generator_losses.npy', np.array(G_losses))
     np.save(f'{ROOT}/runs/{args.experiment_name}/discriminator_losses.npy', np.array(D_losses))
 
